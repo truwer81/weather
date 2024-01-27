@@ -2,12 +2,13 @@ package com.example;
 
 import java.sql.*;
 
-public class Main {
+public class PreparedStatementMain {
 
     public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
-        Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery("select * from animal");
+        PreparedStatement preparedStatement = connection.prepareStatement("select * from animal where name = ?");
+        preparedStatement.setString(1, "Benio");
+        ResultSet resultSet = preparedStatement.executeQuery();
 
         while (resultSet.next()) {
             long id = resultSet.getLong("id");
@@ -17,7 +18,7 @@ public class Main {
         }
 
         resultSet.close();
-        statement.close();
+        preparedStatement.close();
         connection.close();
     }
 }
