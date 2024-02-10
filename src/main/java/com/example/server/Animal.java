@@ -1,15 +1,22 @@
-package com.example;
+package com.example.server;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+
+import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 public class Animal {
 
     @Id
+    @GeneratedValue(strategy = SEQUENCE)
     private Long id;
     private String name;
     private Integer age;
+    @Column(name = "created_date")
+    private String createdDate;
 
     public Animal() {
     }
@@ -42,5 +49,22 @@ public class Animal {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public String getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @Override
+    public String toString() {
+        return "Animal{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                '}';
     }
 }

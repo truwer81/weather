@@ -1,0 +1,15 @@
+body {
+    color: red;
+}
+
+p {
+    color: blue;
+}
+
+p:hover{
+    color: yellow;
+}
+
+table{
+    border-color: blueviolet;
+}
