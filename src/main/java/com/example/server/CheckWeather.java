@@ -8,7 +8,7 @@ import jakarta.persistence.Id;
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
-public class Animal {
+public class CheckWeather {
 
     @Id
     @GeneratedValue(strategy = SEQUENCE)
@@ -18,10 +18,10 @@ public class Animal {
     @Column(name = "created_date")
     private String createdDate;
 
-    public Animal() {
+    public CheckWeather() {
     }
 
-    public Animal(Long id, String name, Integer age) {
+    public CheckWeather(Long id, String name, Integer age) {
         this.id = id;
         this.name = name;
         this.age = age;

@@ -8,17 +8,17 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class TimeClient {
+public class WeatherApiClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
-    public TimeClient(HttpClient httpClient, ObjectMapper objectMapper) {
+    public WeatherApiClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
     }
 
-    public String getTime() {
+    public String getWeather() {
         var httpRequest = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(String.format("http://worldtimeapi.org/api/timezone/Europe/Warsaw")))

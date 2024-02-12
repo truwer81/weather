@@ -14,7 +14,7 @@ public class HibernateUtils {
                 .build();
 
         sessionFactory = new MetadataSources(registry)
-                .addAnnotatedClass(Animal.class)
+                .addAnnotatedClass(CheckWeather.class)
                 .buildMetadata()
                 .buildSessionFactory();
     }

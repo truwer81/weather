@@ -9,26 +9,27 @@ import java.util.Objects;
 
 public class Server {
 
-    private final AnimalController animalController;
+    private final WeatherController weatherController;
 
     public Server() {
         var objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         var httpClient = HttpClient.newHttpClient();
         var sessionFactory = HibernateUtils.getSessionFactory();
-        var animalRepository = new AnimalHibernateRepository(sessionFactory);
-        var timeClient = new TimeClient(httpClient, objectMapper);
-        var animalService = new AnimalService(animalRepository, timeClient);
-        this.animalController = new AnimalController(animalService, objectMapper);
+        var weatherRepository = new WeatherHibernateRepository(sessionFactory);
+        var weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
+        var weatherService = new WeatherService(weatherRepository, weatherApiClient);
+        this.weatherController = new WeatherController(weatherService, objectMapper);
     }
 
     public String callServer(String method, String path, String json) {
         try {
-            if (Objects.equals(method, "GET") && Objects.equals(path, "/animals")) {
-                return "200 " + animalController.getAnimals();
+            if (Objects.equals(method, "GET") && path.startsWith("/weather/")) {
+                String cityName = path.split("/")[2]; // zakładając, że ścieżka ma format "/weather/{cityName}"
+                return "200 " + weatherController.getWeatherForCity(cityName);
             }
             if (Objects.equals(method, "POST") && Objects.equals(path, "/animals")) {
-                animalController.createAnimals(json);
+                weatherController.createAnimals(json);
                 return "201";
             }
         } catch (JsonProcessingException | IllegalArgumentException e) {
