@@ -13,7 +13,7 @@ public class WeatherHibernateRepository implements WeatherRepository {
     }
 
     @Override
-    public List<CheckWeather> findByCityName(String cityName) {
+    public List<CheckWeather> checkByCityName(String cityName) {
         var session = sessionFactory.openSession();
         var transaction = session.beginTransaction();
 

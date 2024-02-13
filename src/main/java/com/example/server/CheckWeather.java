@@ -1,31 +1,40 @@
 package com.example.server;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity
 public class CheckWeather {
-
+    @ManyToOne
+    @JoinColumn(name = "cityName", referencedColumnName = "cityName")
+    private City city;
     @Id
-    @GeneratedValue(strategy = SEQUENCE)
+    //@GeneratedValue(strategy = SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
-    private Integer age;
-    @Column(name = "created_date")
-    private String createdDate;
+    private String countryCode;
+    private String cityName;
+    private String description;
+    private Float temp;
+    @Column(name = "feels_like")
+    private Float feelsLike;
+    @Column(name = "temp_min")
+    private Float tempMin;
+    @Column(name = "temp_max")
+    private Float tempMax;
+    private Float pressure;
+    private Float humidity;
+    private Float windSpeed;
+    @Column(name = "clouds_all")
+    private Float cloudsAll;
+    @Column(name = "forecastTimestamp")
+    private Long forecastTimestamp;
 
-    public CheckWeather() {
-    }
 
-    public CheckWeather(Long id, String name, Integer age) {
-        this.id = id;
-        this.name = name;
-        this.age = age;
-    }
+
 
     public Long getId() {
         return id;
@@ -35,36 +44,144 @@ public class CheckWeather {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDescription() {
+        return description;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Integer getAge() {
-        return age;
+    public Float getTemp() {
+        return temp;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setTemp(Float temp) {
+        this.temp = temp;
     }
 
-    public String getCreatedDate() {
-        return createdDate;
+    public Float getFeelsLike() {
+        return feelsLike;
     }
 
-    public void setCreatedDate(String createdDate) {
-        this.createdDate = createdDate;
+    public void setFeelsLike(Float feelsLike) {
+        this.feelsLike = feelsLike;
+    }
+
+    public Float getTempMin() {
+        return tempMin;
+    }
+
+    public void setTempMin(Float tempMin) {
+        this.tempMin = tempMin;
+    }
+
+    public Float getTempMax() {
+        return tempMax;
+    }
+
+    public void setTempMax(Float tempMax) {
+        this.tempMax = tempMax;
+    }
+
+    public Float getPressure() {
+        return pressure;
+    }
+
+    public void setPressure(Float pressure) {
+        this.pressure = pressure;
+    }
+
+    public Float getHumidity() {
+        return humidity;
+    }
+
+    public void setHumidity(Float humidity) {
+        this.humidity = humidity;
+    }
+
+    public Float getWindSpeed() {
+        return windSpeed;
+    }
+
+    public void setWindSpeed(Float windSpeed) {
+        this.windSpeed = windSpeed;
+    }
+
+    public Float getCloudsAll() {
+        return cloudsAll;
+    }
+
+    public void setCloudsAll(Float cloudsAll) {
+        this.cloudsAll = cloudsAll;
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public Long getForecastTimestamp() {
+        return forecastTimestamp;
+    }
+
+    public void setForecastTimestamp(Long forecastTimestamp) {
+        this.forecastTimestamp = forecastTimestamp;
+    }
+
+    // Konwersja timestamp UNIX na LocalDateTime
+    public LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
+        return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
+    }
+
+
+
+    public CheckWeather(City city, Long id, String countryCode, String cityName, String description, Float temp, Float feelsLike, Float tempMin, Float tempMax, Float pressure, Float humidity, Float windSpeed, Float cloudsAll, Long forecastTimestamp) {
+        this.city = city;
+        this.id = id;
+        this.countryCode = countryCode;
+        this.cityName = cityName;
+        this.description = description;
+        this.temp = temp;
+        this.feelsLike = feelsLike;
+        this.tempMin = tempMin;
+        this.tempMax = tempMax;
+        this.pressure = pressure;
+        this.humidity = humidity;
+        this.windSpeed = windSpeed;
+        this.cloudsAll = cloudsAll;
+        this.forecastTimestamp = forecastTimestamp;
+    }
+    public CheckWeather() {
     }
 
     @Override
     public String toString() {
-        return "Animal{" +
+        return "CheckWeather{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", age=" + age +
+                ", countryCode=" + countryCode +
+                ", cityName=" + cityName +
+                ", description='" + description + '\'' +
+                ", temp=" + temp +
+                ", feels_like=" + feelsLike +
+                ", temp_min=" + tempMin +
+                ", temp_max=" + tempMax +
+                ", pressure=" + pressure +
+                ", humidity=" + humidity +
+                ", windSpeed=" + windSpeed +
+                ", clouds_all='" + cloudsAll + '\'' +
                 '}';
     }
 }
+

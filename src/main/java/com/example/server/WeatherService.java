@@ -13,13 +13,12 @@ public class WeatherService {
     }
 
     public List<CheckWeather> getWeather(String cityName) {
-        return weatherRepository.findByCityName(cityName);
+        return weatherRepository.checkByCityName(cityName);
     }
 
-    public void createAnimal(CheckWeather checkWeather) {
-        var age = checkWeather.getAge();
-        var time = weatherApiClient.getWeather();
-        checkWeather.setCreatedDate(time);
+    public void addWeather(CheckWeather checkWeather) {
+        var time = weatherApiClient.getWeather(checkWeather.getCityName());
+
 
         weatherRepository.saveWeather(checkWeather);
     }

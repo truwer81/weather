@@ -12,25 +12,27 @@ public class WeatherApiClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
+    private final String apiKey = "13f86a736285b9535206b2294119cb9d";
 
-    public WeatherApiClient(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = httpClient;
-        this.objectMapper = objectMapper;
+    public WeatherApiClient() {
+        this.httpClient = HttpClient.newHttpClient();
+        this.objectMapper = new ObjectMapper();
     }
 
-    public String getWeather() {
-        var httpRequest = HttpRequest.newBuilder()
+    public WeatherResponse getWeather(String cityName) {
+        HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
-                .uri(URI.create(String.format("http://worldtimeapi.org/api/timezone/Europe/Warsaw")))
+                .uri(URI.create("http://api.openweathermap.org/data/2.5/weather?q=" + cityName + "&appid=" + apiKey))
                 .build();
 
         try {
-            var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            var responseBody = httpResponse.body();
-            var dateTime = objectMapper.readValue(responseBody, DateTimeDTO.class);
-            return dateTime.getDatetime();
+            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+            return objectMapper.readValue(httpResponse.body(), WeatherResponse.class);
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            // Zwróć null lub obsłuż wyjątek inaczej, w zależności od twoich potrzeb
+            return null;
         }
     }
 }
+
