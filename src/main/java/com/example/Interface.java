@@ -1,25 +1,26 @@
 package com.example;
+import org.hibernate.SessionFactory;
+import com.example.server.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.http.HttpClient;
 
-import com.example.server.Server;
-
-import java.util.Scanner;
 
 public class Interface {
 
     public static void main(String[] args) {
-        var server = new Server();
+        // Inicjalizacja zależności
+        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        HttpClient httpClient = HttpClient.newHttpClient();
+        SessionFactory sessionFactory = HibernateUtils.getSessionFactory(); // Upewnij się, że HibernateUtils jest odpowiednio skonfigurowane
+        WeatherRepository weatherRepository = new WeatherHibernateRepository(sessionFactory);
+        WeatherApiClient weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
+        WeatherService weatherService = new WeatherService(weatherRepository, weatherApiClient);
 
-        var scanner = new Scanner(System.in);
-        System.out.println("Wpisz imie psa: ");
-        var name = scanner.next();
-        System.out.println("Wpisz wiek psa: ");
-        var age = scanner.nextInt();
-        var createRequest = "{\"name\": \"" + name + "\", \"age\": \"" + age + "\"}";
-        var response = server.callServer("POST", "/animals", createRequest);
-        System.out.println("Odpowiedź z serwera: " + response);
+        // Inicjalizacja ConsoleMenu z WeatherService
+        ConsoleMenu consoleMenu = new ConsoleMenu(weatherService);
 
-        System.out.println("Informacje o wszystkich psach:");
-        response = server.callServer("GET", "/animals", null);
-        System.out.println("Odpowiedź z serwera: " + response);
+        // Uruchomienie menu
+        consoleMenu.displayMenu();
     }
 }

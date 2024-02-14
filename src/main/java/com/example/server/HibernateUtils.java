@@ -15,6 +15,7 @@ public class HibernateUtils {
 
         sessionFactory = new MetadataSources(registry)
                 .addAnnotatedClass(CheckWeather.class)
+                .addAnnotatedClass(City.class)
                 .buildMetadata()
                 .buildSessionFactory();
     }

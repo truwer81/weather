@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Optional;
 
 public class WeatherApiClient {
 
@@ -14,9 +15,20 @@ public class WeatherApiClient {
     private final ObjectMapper objectMapper;
     private final String apiKey = "13f86a736285b9535206b2294119cb9d";
 
-    public WeatherApiClient() {
+    public WeatherApiClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
+    }
+    public Optional<WeatherResponse> getWeatherIfExists(String cityName) {
+        try {
+            WeatherResponse response = getWeather(cityName);
+            if (response != null) {
+                return Optional.of(response);
+            }
+        } catch (Exception e) {
+            // Obsługa wyjątków
+        }
+        return Optional.empty();
     }
 
     public WeatherResponse getWeather(String cityName) {
@@ -30,7 +42,7 @@ public class WeatherApiClient {
             return objectMapper.readValue(httpResponse.body(), WeatherResponse.class);
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
-            // Zwróć null lub obsłuż wyjątek inaczej, w zależności od twoich potrzeb
+
             return null;
         }
     }

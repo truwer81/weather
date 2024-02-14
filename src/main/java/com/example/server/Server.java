@@ -29,7 +29,7 @@ public class Server {
                 return "200 " + weatherController.getWeatherForCity(cityName);
             }
             if (Objects.equals(method, "POST") && Objects.equals(path, "/animals")) {
-                weatherController.createAnimals(json);
+                weatherController.addWeather(json);
                 return "201";
             }
         } catch (JsonProcessingException | IllegalArgumentException e) {

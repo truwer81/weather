@@ -29,9 +29,18 @@ public class City {
     public City(String cityName, String countryCode) {
         this.cityName = cityName;
         this.countryCode = countryCode;
+
     }
 
     public City() {
+    }
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "cityName='" + cityName + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                '}';
     }
 
     @Override

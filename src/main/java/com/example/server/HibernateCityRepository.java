@@ -47,4 +47,28 @@ public Optional<City> findByCityName(String cityName) {
             throw e;
         }
     }
+    public void saveCity(City city) {
+        var session = sessionFactory.openSession();
+        var tx = session.beginTransaction();
+        try {
+            tx = session.beginTransaction();
+
+            // Sprawdzenie, czy miasto już istnieje
+            City existingCity = session.get(City.class, city.getCityName());
+            if (existingCity == null) {
+                // Miasto nie istnieje, więc je zapisujemy
+                session.save(city);
+            } else {
+                // Miasto już istnieje
+            }
+
+            tx.commit();
+        } catch (RuntimeException e) {
+            if (tx != null) tx.rollback();
+            throw e;
+        } finally {
+            session.close();
+        }
+    }
+
 }

@@ -19,10 +19,11 @@ public class WeatherController {
         return objectMapper.writeValueAsString(weatherData); // 200 OK
     }
 
-    // POST: /animals
-    public void createAnimals(String json) throws JsonProcessingException {
-        var animal = objectMapper.readValue(json, CheckWeather.class);
-        weatherService.createAnimal(animal);
+    // POST: /weather
+    public void addWeather(String json) throws JsonProcessingException {
+        var city = objectMapper.readValue(json, City.class);
+        var checkWeather = objectMapper.readValue(json, CheckWeather.class);
+        weatherService.addWeather(checkWeather, city);
         // 201 CREATED
     }
 }

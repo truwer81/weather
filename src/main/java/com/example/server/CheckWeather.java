@@ -11,12 +11,16 @@ public class CheckWeather {
     @ManyToOne
     @JoinColumn(name = "cityName", referencedColumnName = "cityName")
     private City city;
+
+    public void setCity(City city) {
+        this.city = city;
+    }
+
     @Id
     //@GeneratedValue(strategy = SEQUENCE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String countryCode;
-    private String cityName;
+
     private String description;
     private Float temp;
     @Column(name = "feels_like")
@@ -116,20 +120,8 @@ public class CheckWeather {
         this.cloudsAll = cloudsAll;
     }
 
-    public String getCountryCode() {
-        return countryCode;
-    }
-
-    public void setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
-    }
-
-    public String getCityName() {
-        return cityName;
-    }
-
-    public void setCityName(String cityName) {
-        this.cityName = cityName;
+    public City getCity() {
+        return city;
     }
 
     public Long getForecastTimestamp() {
@@ -147,11 +139,9 @@ public class CheckWeather {
 
 
 
-    public CheckWeather(City city, Long id, String countryCode, String cityName, String description, Float temp, Float feelsLike, Float tempMin, Float tempMax, Float pressure, Float humidity, Float windSpeed, Float cloudsAll, Long forecastTimestamp) {
+    public CheckWeather(City city, Long id, String description, Float temp, Float feelsLike, Float tempMin, Float tempMax, Float pressure, Float humidity, Float windSpeed, Float cloudsAll, Long forecastTimestamp) {
         this.city = city;
         this.id = id;
-        this.countryCode = countryCode;
-        this.cityName = cityName;
         this.description = description;
         this.temp = temp;
         this.feelsLike = feelsLike;
@@ -170,8 +160,7 @@ public class CheckWeather {
     public String toString() {
         return "CheckWeather{" +
                 "id=" + id +
-                ", countryCode=" + countryCode +
-                ", cityName=" + cityName +
+                ", city=" + city +
                 ", description='" + description + '\'' +
                 ", temp=" + temp +
                 ", feels_like=" + feelsLike +

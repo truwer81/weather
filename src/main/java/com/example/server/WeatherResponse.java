@@ -8,12 +8,20 @@ public class WeatherResponse {
 
     @JsonProperty("sys")
     private SystemInfo systemInfo; // Klasa pomocnicza dla danych sys
-    private static class SystemInfo {
+    public static class SystemInfo {
         @JsonProperty("country")
         private String countryCode;
+
+        public String getCountryCode() {
+            return countryCode;
+        }
+
+        public void setCountryCode(String countryCode) {
+            this.countryCode = countryCode;
+        }
     }
     @JsonProperty("dt")
-    private Float forecastTimestamp;
+    private Long forecastTimestamp;
     @JsonProperty("name")
     private String cityName;
 
@@ -21,7 +29,7 @@ public class WeatherResponse {
     private String description;
     @JsonProperty("main")
     private MainInfo mainInfo; // Klasa pomocnicza dla danych main
-    private static class MainInfo {
+    public static class MainInfo {
         @JsonProperty("temp")
         private Float temp;
         @JsonProperty("feels_like")
@@ -85,7 +93,7 @@ public class WeatherResponse {
     }
     @JsonProperty("wind")
     private WindInfo windInfo; // Klasa pomocnicza dla danych wind
-    private static class WindInfo {
+    public static class WindInfo {
         @JsonProperty("speed")
         private Float windSpeed;
 
@@ -99,7 +107,7 @@ public class WeatherResponse {
     }
     @JsonProperty("clouds")
     private CloudsInfo cloudsInfo; // Klasa pomocnicza dla danych clouds
-    private static class CloudsInfo {
+    public static class CloudsInfo {
         @JsonProperty("all")
         private Float cloudsAll;
 
@@ -120,11 +128,11 @@ public class WeatherResponse {
         this.systemInfo = systemInfo;
     }
 
-    public Float getForecastTimestamp() {
+    public Long getForecastTimestamp() {
         return forecastTimestamp;
     }
 
-    public void setForecastTimestamp(Float forecastTimestamp) {
+    public void setForecastTimestamp(Long forecastTimestamp) {
         this.forecastTimestamp = forecastTimestamp;
     }
 
