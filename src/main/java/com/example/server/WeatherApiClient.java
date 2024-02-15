@@ -1,5 +1,6 @@
 package com.example.server;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
@@ -18,6 +19,8 @@ public class WeatherApiClient {
     public WeatherApiClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = HttpClient.newHttpClient();
         this.objectMapper = new ObjectMapper();
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     }
     public Optional<WeatherResponse> getWeatherIfExists(String cityName) {
         try {

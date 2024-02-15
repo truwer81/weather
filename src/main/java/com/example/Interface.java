@@ -15,6 +15,7 @@ public class Interface {
         SessionFactory sessionFactory = HibernateUtils.getSessionFactory(); // Upewnij się, że HibernateUtils jest odpowiednio skonfigurowane
         WeatherRepository weatherRepository = new WeatherHibernateRepository(sessionFactory);
         WeatherApiClient weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
+        CheckWeather checkWeather = new CheckWeather();
         WeatherService weatherService = new WeatherService(weatherRepository, weatherApiClient);
 
         // Inicjalizacja ConsoleMenu z WeatherService

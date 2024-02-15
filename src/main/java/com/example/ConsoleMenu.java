@@ -1,11 +1,19 @@
 package com.example;
 
+import com.example.server.CheckWeather;
+import com.example.server.WeatherResponse;
 import com.example.server.WeatherService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ConsoleMenu {
 
     private WeatherService weatherService;
+
+
+
 
 
     public ConsoleMenu(WeatherService weatherService) {
@@ -37,10 +45,22 @@ public class ConsoleMenu {
     private void checkWeather(Scanner scanner) {
         System.out.print("Podaj nazwę miasta: ");
         String cityName = scanner.nextLine();
-        weatherService.getWeather(cityName);
-        System.out.println("Pogoda dla " + cityName + ":");
-        System.out.println(weatherService.getWeather(cityName));
 
+        // Wywołanie metody getWeatherFromApi(cityName) i przechowanie wyniku do wykorzystania
+        Optional<WeatherResponse> weatherResponse = weatherService.getWeatherFromApi(cityName);
 
+        // Sprawdzamy, czy odpowiedź istnieje
+        if (weatherResponse.isPresent()) {
+            // Przekształcam WeatherResponse na CheckWeather za pomocą metody serwisowej
+            CheckWeather checkWeather = weatherService.saveWeatherResponse(weatherResponse.get());
+
+            // Teraz możemy wywołać toString() na obiekcie CheckWeather
+            System.out.println("Pogoda dla " + cityName + ":");
+            System.out.println(checkWeather.toString());
+        } else {
+            System.out.println("Nie udało się pobrać danych pogodowych dla miasta " + cityName);
+        }
     }
+
+
 }

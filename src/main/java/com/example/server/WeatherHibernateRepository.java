@@ -16,16 +16,25 @@ public class WeatherHibernateRepository implements WeatherRepository {
     public List<CheckWeather> checkByCityName(String cityName) {
         var session = sessionFactory.openSession();
         var transaction = session.beginTransaction();
+        try {
+            var weatherData = session.createQuery("select w from CheckWeather w where w.city.cityName = :cityName", CheckWeather.class)
 
-        var city = session.createQuery("select a from City a", CheckWeather.class).getResultList();
-        var weatherData = session.createQuery("select w from CheckWeather w where w.city.cityName = :cityName", CheckWeather.class)
-                .setParameter("cityName", cityName)
-                .getResultList();
-        transaction.commit();
-        session.close();
+                    .setParameter("cityName", cityName)
+                    .getResultList();
+            transaction.commit();
+            session.close();
 
-        return weatherData;
+            return weatherData;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
+        } finally {
+            session.close();
+        }
     }
+
 
     @Override
     public void saveWeather(CheckWeather checkWeather) {

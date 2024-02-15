@@ -18,6 +18,8 @@ public class Server {
         var sessionFactory = HibernateUtils.getSessionFactory();
         var weatherRepository = new WeatherHibernateRepository(sessionFactory);
         var weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
+        var checkWeather = new CheckWeather();
+        var city = new City();
         var weatherService = new WeatherService(weatherRepository, weatherApiClient);
         this.weatherController = new WeatherController(weatherService, objectMapper);
     }

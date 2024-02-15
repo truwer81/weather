@@ -3,7 +3,7 @@ import java.util.List;
 import java.util.Optional;
 import static com.example.server.HibernateUtils.*;
 
-public class HibernateCityRepository implements CityRepository{
+public class CityHibernateRepository implements CityRepository{
 
 @Override
 public Optional<City> findByCityName(String cityName) {

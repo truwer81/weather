@@ -3,11 +3,14 @@ package com.example.server;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class WeatherResponse {
 
     @JsonProperty("sys")
     private SystemInfo systemInfo; // Klasa pomocnicza dla danych sys
+
     public static class SystemInfo {
         @JsonProperty("country")
         private String countryCode;
@@ -25,8 +28,21 @@ public class WeatherResponse {
     @JsonProperty("name")
     private String cityName;
 
-    @JsonProperty("description")
-    private String description;
+    @JsonProperty("weather")
+    private List<WeatherDescription> weather; // Klasa pomocnicza dla danych weather
+    public static class WeatherDescription {
+        @JsonProperty("description")
+        private String description;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+    }
+
     @JsonProperty("main")
     private MainInfo mainInfo; // Klasa pomocnicza dla danych main
     public static class MainInfo {
@@ -124,6 +140,18 @@ public class WeatherResponse {
         return systemInfo;
     }
 
+    public WeatherResponse(List<WeatherDescription> weather) {
+        this.weather = weather;
+    }
+
+    public List<WeatherDescription> getWeather() {
+        return weather;
+    }
+
+    public void setWeather(List<WeatherDescription> weather) {
+        this.weather = weather;
+    }
+
     public void setSystemInfo(SystemInfo systemInfo) {
         this.systemInfo = systemInfo;
     }
@@ -144,13 +172,6 @@ public class WeatherResponse {
         this.cityName = cityName;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public MainInfo getMainInfo() {
         return mainInfo;
@@ -173,6 +194,19 @@ public class WeatherResponse {
     }
 
     public void setCloudsInfo(CloudsInfo cloudsInfo) {
+        this.cloudsInfo = cloudsInfo;
+    }
+
+    public WeatherResponse() {
+    }
+
+    public WeatherResponse(SystemInfo systemInfo, List weather, Long forecastTimestamp, String cityName, MainInfo mainInfo, WindInfo windInfo, CloudsInfo cloudsInfo) {
+        this.systemInfo = systemInfo;
+        this.weather = weather;
+        this.forecastTimestamp = forecastTimestamp;
+        this.cityName = cityName;
+        this.mainInfo = mainInfo;
+        this.windInfo = windInfo;
         this.cloudsInfo = cloudsInfo;
     }
 }

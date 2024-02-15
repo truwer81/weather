@@ -15,7 +15,7 @@ public class WeatherController {
 
     // GET: /weather
     public String getWeatherForCity(String cityName) throws JsonProcessingException {
-        var weatherData = weatherService.getWeather(cityName);
+        var weatherData = weatherService.getWeatherFromApi(cityName);
         return objectMapper.writeValueAsString(weatherData); // 200 OK
     }
 
