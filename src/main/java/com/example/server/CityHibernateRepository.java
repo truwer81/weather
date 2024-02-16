@@ -25,7 +25,7 @@ public Optional<City> findByCityName(String cityName) {
         // W przypadku błędu cofa transakcję i zamyka sesję
         if (transaction != null) transaction.rollback();
         session.close();
-        throw e; // Można również obsłużyć wyjątek bardziej szczegółowo
+        throw e;
     }
    }
     public List<City> findAll() {
@@ -51,8 +51,6 @@ public Optional<City> findByCityName(String cityName) {
         var session = sessionFactory.openSession();
         var tx = session.beginTransaction();
         try {
-            tx = session.beginTransaction();
-
             // Sprawdzenie, czy miasto już istnieje
             City existingCity = session.get(City.class, city.getCityName());
             if (existingCity == null) {

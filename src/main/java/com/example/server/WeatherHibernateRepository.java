@@ -7,7 +7,6 @@ import java.util.List;
 public class WeatherHibernateRepository implements WeatherRepository {
 
     private final SessionFactory sessionFactory;
-
     public WeatherHibernateRepository(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -18,7 +17,6 @@ public class WeatherHibernateRepository implements WeatherRepository {
         var transaction = session.beginTransaction();
         try {
             var weatherData = session.createQuery("select w from CheckWeather w where w.city.cityName = :cityName", CheckWeather.class)
-
                     .setParameter("cityName", cityName)
                     .getResultList();
             transaction.commit();
@@ -40,9 +38,7 @@ public class WeatherHibernateRepository implements WeatherRepository {
     public void saveWeather(CheckWeather checkWeather) {
         var session = sessionFactory.openSession();
         var transaction = session.beginTransaction();
-
         session.persist(checkWeather);
-
         transaction.commit();
         session.close();
     }

@@ -16,7 +16,8 @@ public class Interface {
         WeatherRepository weatherRepository = new WeatherHibernateRepository(sessionFactory);
         WeatherApiClient weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
         CheckWeather checkWeather = new CheckWeather();
-        WeatherService weatherService = new WeatherService(weatherRepository, weatherApiClient);
+        CityRepository cityRepository = new CityHibernateRepository();
+        WeatherService weatherService = new WeatherService(weatherRepository, weatherApiClient, cityRepository);
 
         // Inicjalizacja ConsoleMenu z WeatherService
         ConsoleMenu consoleMenu = new ConsoleMenu(weatherService);

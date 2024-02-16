@@ -1,8 +1,5 @@
 package com.example.server;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.List;
+
 
 import jakarta.persistence.*;
 
@@ -133,10 +130,6 @@ public class CheckWeather {
         this.forecastTimestamp = forecastTimestamp;
     }
 
-    // Konwersja timestamp UNIX na LocalDateTime
-    public LocalDateTime convertTimestampToLocalDateTime(Long timestamp) {
-        return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.systemDefault());
-    }
 
     public CheckWeather(City city, Long id, String description, Float temp, Float feelsLike, Float tempMin, Float tempMax, Float pressure, Float humidity, Float windSpeed, Float cloudsAll, Long forecastTimestamp) {
         this.city = city;

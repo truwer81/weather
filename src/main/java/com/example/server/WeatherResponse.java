@@ -28,11 +28,22 @@ public class WeatherResponse {
     @JsonProperty("name")
     private String cityName;
 
+
     @JsonProperty("weather")
     private List<WeatherDescription> weather; // Klasa pomocnicza dla danych weather
     public static class WeatherDescription {
         @JsonProperty("description")
         private String description;
+        @JsonProperty("id")
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
 
         public String getDescription() {
             return description;

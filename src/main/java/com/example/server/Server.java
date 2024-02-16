@@ -19,8 +19,8 @@ public class Server {
         var weatherRepository = new WeatherHibernateRepository(sessionFactory);
         var weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
         var checkWeather = new CheckWeather();
-        var city = new City();
-        var weatherService = new WeatherService(weatherRepository, weatherApiClient);
+        var cityRepository = new CityHibernateRepository();
+        var weatherService = new WeatherService(weatherRepository, weatherApiClient, cityRepository);
         this.weatherController = new WeatherController(weatherService, objectMapper);
     }
 
