@@ -1,45 +1,35 @@
 package com.example.server;
 
+import com.example.server.localization.LocalizationController;
+import com.example.server.localization.LocalizationRepository;
+import com.example.server.localization.LocalizationService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.hibernate.SessionFactory;
 
 import java.net.http.HttpClient;
 import java.util.Objects;
 
 public class Server {
 
-    private final WeatherController weatherController;
+    private final LocalizationController localizationController;
 
     public Server() {
-        var objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        var httpClient = HttpClient.newHttpClient();
-        var sessionFactory = HibernateUtils.getSessionFactory();
-        var weatherRepository = new WeatherHibernateRepository(sessionFactory);
-        var weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
-        var checkWeather = new CheckWeather();
-        var cityRepository = new CityHibernateRepository();
-        var weatherService = new WeatherService(weatherRepository, weatherApiClient, cityRepository);
-        this.weatherController = new WeatherController(weatherService, objectMapper);
+        SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
+        LocalizationRepository localizationRepository = new LocalizationRepository(sessionFactory);
+        LocalizationService localizationService = new LocalizationService(localizationRepository);
+        LocalizationController localizationController = new LocalizationController(objectMapper, localizationService);
+        this.localizationController = localizationController;
     }
 
+    // mapujemy requesty HTTP na metody kontrolera
     public String callServer(String method, String path, String json) {
-        try {
-            if (Objects.equals(method, "GET") && path.startsWith("/weather/")) {
-                String cityName = path.split("/")[2]; // zakładając, że ścieżka ma format "/weather/{cityName}"
-                return "200 " + weatherController.getWeatherForCity(cityName);
-            }
-            if (Objects.equals(method, "POST") && Objects.equals(path, "/animals")) {
-                weatherController.addWeather(json);
-                return "201";
-            }
-        } catch (JsonProcessingException | IllegalArgumentException e) {
-            return "400";
-        } catch (Exception e) {
-            return "500";
+        if (Objects.equals(method, "POST") && path.startsWith("/localizations")) {
+            return localizationController.createLocalization(json);
         }
-
-        return "";
+        return "404";
     }
 }

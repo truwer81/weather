@@ -1,28 +1,43 @@
 package com.example;
-import org.hibernate.SessionFactory;
-import com.example.server.*;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.net.http.HttpClient;
 
+import com.example.server.Server;
+
+import java.util.Scanner;
 
 public class Interface {
 
     public static void main(String[] args) {
-        // Inicjalizacja zależności
-        ObjectMapper objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        HttpClient httpClient = HttpClient.newHttpClient();
-        SessionFactory sessionFactory = HibernateUtils.getSessionFactory(); // Upewnij się, że HibernateUtils jest odpowiednio skonfigurowane
-        WeatherRepository weatherRepository = new WeatherHibernateRepository(sessionFactory);
-        WeatherApiClient weatherApiClient = new WeatherApiClient(httpClient, objectMapper);
-        CheckWeather checkWeather = new CheckWeather();
-        CityRepository cityRepository = new CityHibernateRepository();
-        WeatherService weatherService = new WeatherService(weatherRepository, weatherApiClient, cityRepository);
+        Server server = new Server();
 
-        // Inicjalizacja ConsoleMenu z WeatherService
-        ConsoleMenu consoleMenu = new ConsoleMenu(weatherService);
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Witaj w aplikacji pogodowej!");
 
-        // Uruchomienie menu
-        consoleMenu.displayMenu();
+        while (true) {
+            System.out.println("Co chcesz zrobić:");
+            System.out.println("1. Dodaj miasto");
+            System.out.println("0. Wyłącz program");
+            int value = scanner.nextInt();
+            scanner.nextLine();
+            switch (value) {
+                case 1:
+                    System.out.println("Podaj nazwę miasta:");
+                    String city = scanner.nextLine();
+                    System.out.println("Podaj kraj:");
+                    String country = scanner.nextLine();
+                    System.out.println("Podaj region (lub wciśnij enter):");
+                    String region = scanner.nextLine();
+                    System.out.println("Podaj szerokość geograficzną:");
+                    double latitude = scanner.nextDouble();
+                    System.out.println("Podaj długość geograficzną:");
+                    double longitude = scanner.nextDouble();
+                    String json = "{\"city\":\"" + city + "\",\"country\":\"" + country + "\",\"region\":\"" + region + "\",\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}";
+                    String response = server.callServer("POST", "/localizations", json);
+                    System.out.println("Zorbione - odpowiedź: " + response);
+                    break;
+                case 0:
+                    System.out.println("Do widzenia!");
+                    return;
+            }
+        }
     }
 }
