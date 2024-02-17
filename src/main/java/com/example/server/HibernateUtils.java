@@ -1,5 +1,6 @@
 package com.example.server;
 
+import com.example.server.localization.Localization;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistry;
@@ -14,8 +15,7 @@ public class HibernateUtils {
                 .build();
 
         sessionFactory = new MetadataSources(registry)
-                .addAnnotatedClass(CheckWeather.class)
-                .addAnnotatedClass(City.class)
+                .addAnnotatedClass(Localization.class)
                 .buildMetadata()
                 .buildSessionFactory();
     }
