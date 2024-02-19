@@ -3,15 +3,20 @@ package com.example.server.localization;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 // @RequiredArgsConstructor - zamiast konstuktora
 public class LocalizationController {
 
     private final ObjectMapper objectMapper;
     private final LocalizationService localizationService;
+private final GetLocalizationsService getLocalizationsService;
 
-    public LocalizationController(ObjectMapper objectMapper, LocalizationService localizationService) {
+    public LocalizationController(ObjectMapper objectMapper, LocalizationService localizationService, GetLocalizationsService getLocalizationsService) {
         this.objectMapper = objectMapper;
         this.localizationService = localizationService;
+        this.getLocalizationsService = getLocalizationsService;
     }
 
     // POST /localizations
@@ -28,6 +33,20 @@ public class LocalizationController {
             return objectMapper.writeValueAsString(localizationDTO);
         } catch (JsonProcessingException | IllegalArgumentException e) {
             return "{\"error\": \"Invalid data\"}"; // http 400
+        } catch (Exception e) {
+            return "{\"error\": \"Internal server error\"}"; // http 500
+        }
+    }
+    // GET /localizations
+    public String getLocalizations() throws JsonProcessingException {
+        try{
+            List<Localization> localizations = getLocalizationsService.getAllLocalizations();
+            return objectMapper.writeValueAsString(localizations
+                    .stream().map(this::asDTO)
+                    .collect(Collectors
+                            .toList()));
+        } catch (JsonProcessingException e) {
+            return "{\"error\": \"Internal server error\"}"; //http 400
         } catch (Exception e) {
             return "{\"error\": \"Internal server error\"}"; // http 500
         }
