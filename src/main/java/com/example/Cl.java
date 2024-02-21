@@ -105,7 +105,7 @@ public enum Cl {
                     "\u001B[38;5;242m ",
                     "\u001B[38;5;244m "}
     ),
-    RESET (new String[] {"\u001B[0m"});
+    RESET(new String[]{"\u001B[0m"});
 
     private final String[] kod;
 
@@ -127,10 +127,11 @@ public enum Cl {
     }
 
 
-    public static void printlnC (Cl Color, int shade, String text) {
+    public static void printlnC(Cl Color, int shade, String text) {
         System.out.println(Color.get(shade) + text + Color.get(0));
     }
-    public static void printC (Cl Color, int shade, String text) {
+
+    public static void printC(Cl Color, int shade, String text) {
         System.out.print(Color.get(shade) + text + Cl.RESET.get(0));
     }
 }

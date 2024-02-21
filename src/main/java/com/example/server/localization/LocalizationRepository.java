@@ -3,6 +3,9 @@ package com.example.server.localization;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+
+import java.util.List;
 
 public class LocalizationRepository {
 
@@ -23,4 +26,21 @@ public class LocalizationRepository {
 
         return localization;
     }
+
+    public List<Localization> findAll() {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            String hql = "FROM Localization";
+            Query<Localization> query = session.createQuery(hql, Localization.class);
+
+            List<Localization> localizations = query.getResultList();
+            transaction.commit();
+            return localizations;
+        } finally {
+
+            session.close();
+        }
+    }
+
 }
