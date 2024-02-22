@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocalizationDTO {
+public class WeatherDataQueryDTO {
     private Long id;
     private String city;
     private String country;

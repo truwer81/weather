@@ -1,8 +1,10 @@
 package com.example.server.localization;
 
+import java.util.List;
+
 public class LocalizationService {
 
-    private final LocalizationRepository localizationRepository;
+    private LocalizationRepository localizationRepository;
 
     public LocalizationService(LocalizationRepository localizationRepository) {
         this.localizationRepository = localizationRepository;
@@ -23,4 +25,9 @@ public class LocalizationService {
 
         return localizationRepository.save(localization);
     }
+
+    public List<Localization> getAllLocalizations() {
+        return localizationRepository.findAll();
+    }
+
 }

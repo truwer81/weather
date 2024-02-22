@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hibernate.SessionFactory;
 
-import java.net.http.HttpClient;
 import java.util.Objects;
 
 public class Server {
@@ -26,9 +25,11 @@ public class Server {
     }
 
     // mapujemy requesty HTTP na metody kontrolera
-    public String callServer(String method, String path, String json) {
+    public String callServer(String method, String path, String json) throws JsonProcessingException {
         if (Objects.equals(method, "POST") && path.startsWith("/localizations")) {
             return localizationController.createLocalization(json);
+        } else if (Objects.equals(method, "GET") && path.startsWith("/localizations")) {
+            return localizationController.getLocalizations();
         }
         return "404";
     }
