@@ -43,4 +43,19 @@ public class LocalizationRepository {
         }
     }
 
+    public Localization findOne(long localizationId) {
+        Session session = sessionFactory.openSession();
+        Transaction transaction = session.beginTransaction();
+        try {
+            String hql = "FROM Localization WHERE id=" + localizationId;
+            Query<Localization> query = session.createQuery(hql, Localization.class);
+
+            Localization localization = query.getSingleResult();
+            transaction.commit();
+            return localization;
+        } finally {
+
+            session.close();
+        }
+    }
 }

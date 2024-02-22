@@ -48,6 +48,19 @@ public class LocalizationController {
         }
     }
 
+    // GET /localization
+    public String getLocalization(long localizationId) throws JsonProcessingException {
+        try {
+            Localization localizations = localizationService.getLocalization(localizationId);
+            return objectMapper.writeValueAsString(localizations);
+        } catch (JsonProcessingException e) {
+            return "{\"error\": \"Internal server error\"}"; //http 400
+        } catch (Exception e) {
+            return "{\"error\": \"Internal server error\"}"; // http 500
+        }
+    }
+
+
     public WeatherDataQueryDTO asDTO(Localization localization) {
         return new WeatherDataQueryDTO(
                 localization.getId(),

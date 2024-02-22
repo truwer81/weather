@@ -30,4 +30,7 @@ public class LocalizationService {
         return localizationRepository.findAll();
     }
 
+    public Localization getLocalization(long localizationId) {
+        return localizationRepository.findOne(localizationId);
+    }
 }
