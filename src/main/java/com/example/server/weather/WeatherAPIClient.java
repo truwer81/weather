@@ -65,7 +65,6 @@ public class WeatherAPIClient {
         }
     }
 
-
     static public class WeatherRetrievalException extends Exception {
         public WeatherRetrievalException(String s) {
         }

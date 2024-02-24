@@ -7,9 +7,8 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
-
 public class WeatherService {
+
     private WeatherAPIClient weatherAPIClient;
     private LocalizationRepository localizationRepository;
 

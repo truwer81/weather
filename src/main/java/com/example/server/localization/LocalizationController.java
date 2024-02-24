@@ -48,7 +48,7 @@ public class LocalizationController {
         }
     }
 
-    // GET /localization
+    // GET /localizations/{localizationId}
     public String getLocalization(long localizationId) throws JsonProcessingException {
         try {
             Localization localizations = localizationService.getLocalization(localizationId);

@@ -38,7 +38,6 @@ public class LocalizationRepository {
             transaction.commit();
             return localizations;
         } finally {
-
             session.close();
         }
     }

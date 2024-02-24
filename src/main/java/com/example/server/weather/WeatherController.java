@@ -6,14 +6,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 
 public class WeatherController {
-    private ObjectMapper objectMapper;
-    private WeatherService weatherService;
+
+    private final ObjectMapper objectMapper;
+    private final WeatherService weatherService;
 
     public WeatherController(ObjectMapper objectMapper, WeatherService weatherService) {
         this.objectMapper = objectMapper;
         this.weatherService = weatherService;
     }
 
+    // GET /weather-forecast?localizationId={localizationId}&date={date}
     public String getWeather(Long localizationId, String date) throws JsonProcessingException, WeatherAPIClient.WeatherRetrievalException {
         try {
             LocalDate localDate = LocalDate.parse(date);
@@ -24,7 +26,5 @@ public class WeatherController {
         } catch (Exception e) {
             return "{\"error\": \"Internal server error\"}"; // http 500
         }
-
     }
-
 }
