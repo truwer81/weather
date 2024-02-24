@@ -19,9 +19,8 @@ public class WeatherAPIClient {
     private final String apiKey = "13f86a736285b9535206b2294119cb9d";
 
     public WeatherAPIClient(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
-        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
     }
 
     public Weather getWeather(Float longitude, Float latitude, Timestamp dt) throws WeatherRetrievalException {

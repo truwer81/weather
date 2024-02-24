@@ -1,60 +1,34 @@
 package com.example.server.localization;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.query.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Repository
 public class LocalizationRepository {
 
-    private final SessionFactory sessionFactory;
+    @PersistenceContext
+    private EntityManager entityManager; // == session
 
-    public LocalizationRepository(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
-
+    @Transactional
     public Localization save(Localization localization) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-
-        session.persist(localization);
-
-        transaction.commit();
-        session.close();
-
+        entityManager.persist(localization);
         return localization;
     }
 
     public List<Localization> findAll() {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            String hql = "FROM Localization";
-            Query<Localization> query = session.createQuery(hql, Localization.class);
-
-            List<Localization> localizations = query.getResultList();
-            transaction.commit();
-            return localizations;
-        } finally {
-            session.close();
-        }
+        TypedQuery<Localization> query = entityManager.createQuery("select l from Localization l", Localization.class);
+        List<Localization> localizations = query.getResultList();
+        return localizations;
     }
 
     public Localization findOne(long localizationId) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            String hql = "FROM Localization WHERE id=" + localizationId;
-            Query<Localization> query = session.createQuery(hql, Localization.class);
-
-            Localization localization = query.getSingleResult();
-            transaction.commit();
-            return localization;
-        } finally {
-
-            session.close();
-        }
+        TypedQuery<Localization> query = entityManager.createQuery("select l from Localization l WHERE id=" + localizationId, Localization.class);
+        Localization localization = query.getSingleResult();
+        return localization;
     }
 }

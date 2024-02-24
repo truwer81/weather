@@ -1,7 +1,10 @@
 package com.example.server.localization;
 
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public class LocalizationService {
 
     private LocalizationRepository localizationRepository;
