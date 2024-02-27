@@ -27,8 +27,6 @@ public class LocalizationRepository {
     }
 
     public Localization findOne(long localizationId) {
-        TypedQuery<Localization> query = entityManager.createQuery("select l from Localization l WHERE id=" + localizationId, Localization.class);
-        Localization localization = query.getSingleResult();
-        return localization;
+        return entityManager.find(Localization.class, localizationId);
     }
 }

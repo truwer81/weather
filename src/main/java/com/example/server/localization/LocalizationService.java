@@ -1,5 +1,6 @@
 package com.example.server.localization;
 
+import jakarta.persistence.NoResultException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +35,10 @@ public class LocalizationService {
     }
 
     public Localization getLocalization(long localizationId) {
-        return localizationRepository.findOne(localizationId);
+        try {
+            return localizationRepository.findOne(localizationId);
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }
