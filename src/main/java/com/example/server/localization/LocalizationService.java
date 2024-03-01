@@ -36,7 +36,7 @@ public class LocalizationService {
 
     public Localization getLocalization(long localizationId) {
         try {
-            return localizationRepository.findOne(localizationId);
+            return localizationRepository.findById(localizationId).orElse(null);
         } catch (NoResultException e) {
             return null;
         }

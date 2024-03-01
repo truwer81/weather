@@ -1,27 +1,26 @@
 package com.example.server.localization;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequiredArgsConstructor
 public class LocalizationController {
 
-    private ObjectMapper objectMapper;
-    private LocalizationService localizationService;
-
-    public LocalizationController(ObjectMapper objectMapper, LocalizationService localizationService) {
-        this.objectMapper = objectMapper;
-        this.localizationService = localizationService;
-    }
+    private final LocalizationService localizationService;
 
     @PostMapping("/localizations")
-    public WeatherDataQueryDTO createLocalization(@RequestBody WeatherDataQueryDTO model) {
+    public ResponseEntity<WeatherDataQueryDTO> createLocalization(@RequestBody WeatherDataQueryDTO model) {
         String city = model.getCity();
         float longitude = model.getLongitude();
         float latitude = model.getLatitude();
@@ -29,7 +28,8 @@ public class LocalizationController {
         String country = model.getCountry();
         Localization localization = localizationService.createLocalization(city, longitude, latitude, region, country);
         WeatherDataQueryDTO weatherDataQueryDTO = asDTO(localization);
-        return weatherDataQueryDTO;
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(weatherDataQueryDTO);
     }
 
     @GetMapping("/localizations")
@@ -51,7 +51,8 @@ public class LocalizationController {
                 localization.getCountry(),
                 localization.getRegion(),
                 localization.getLongitude(),
-                localization.getLatitude()
+                localization.getLatitude(),
+                null
         );
     }
 }

@@ -1,6 +1,8 @@
 package com.example.server.weather;
 
+import com.example.server.exception.WeatherRetrievalException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,20 +18,22 @@ public class WeatherAPIClient {
 
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final String apiKey = "60dee7201c6bb6b28f3894043a213dd8";
+
+    @Value("${api.key}")
+    private String apiKey;
 
     public WeatherAPIClient(HttpClient httpClient, ObjectMapper objectMapper) {
         this.httpClient = httpClient;
         this.objectMapper = objectMapper;
     }
 
-    public Weather getWeather(Float longitude, Float latitude, Timestamp dt) throws WeatherRetrievalException {
+    public WeatherDTO getWeather(Float longitude, Float latitude, Timestamp dt) {
         try {
             WeatherResponseDTO response = getWeatherClient(longitude, latitude, dt);
             if (response == null) {
                 throw new WeatherRetrievalException("No weather data could be retrieved.");
             }
-            Weather weather = new Weather();
+            WeatherDTO weather = new WeatherDTO();
             LocalDate WeatherDate = dt.toLocalDateTime().toLocalDate();
             if (response.getData() != null && !response.getData().isEmpty()) {
                 WeatherResponseDTO.MainData mainData = response.getData().get(0); // pierwszy element z listy
@@ -64,8 +68,7 @@ public class WeatherAPIClient {
         }
     }
 
-    public WeatherResponseDTO getWeatherClient(Float longitude, Float latitude, Timestamp dt) throws
-            WeatherRetrievalException {
+    public WeatherResponseDTO getWeatherClient(Float longitude, Float latitude, Timestamp dt) throws WeatherRetrievalException {
         long unixTimestamp = dt.getTime() / 1000; // Konwersja na sekundy
         HttpRequest httpRequest = HttpRequest.newBuilder()
                 .GET()
@@ -78,15 +81,4 @@ public class WeatherAPIClient {
             throw new WeatherRetrievalException("Error while fetching weather data");
         }
     }
-
-    static public class WeatherRetrievalException extends Exception {
-        public WeatherRetrievalException(String message, Throwable cause) {
-            super(message, cause); // Przekazanie do klasy bazowej Exception
-        }
-
-        public WeatherRetrievalException(String message) {
-            super(message);
-        }
-    }
-
 }

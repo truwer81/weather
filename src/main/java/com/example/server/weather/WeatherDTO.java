@@ -3,8 +3,8 @@ package com.example.server.weather;
 import com.example.server.localization.Localization;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -12,8 +12,7 @@ import java.time.LocalDate;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
-public class Weather {
+public class WeatherDTO {
     private String message;
     private String mainInfo;
     private String description;

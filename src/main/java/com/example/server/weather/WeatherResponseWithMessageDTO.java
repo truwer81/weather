@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
 public class WeatherResponseWithMessageDTO {
-    private Weather weather;
+    private WeatherDTO weather;
     private String generalMessage;
 }
 

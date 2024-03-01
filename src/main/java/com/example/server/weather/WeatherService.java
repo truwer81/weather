@@ -1,5 +1,6 @@
 package com.example.server.weather;
 
+import com.example.server.exception.NoLocalizationFoundException;
 import com.example.server.localization.Localization;
 import com.example.server.localization.LocalizationRepository;
 import org.springframework.stereotype.Service;
@@ -20,20 +21,20 @@ public class WeatherService {
         this.localizationRepository = localizationRepository;
     }
 
-    public WeatherResponseWithMessageDTO getWeather(Long localizationId, LocalDate date) throws WeatherAPIClient.WeatherRetrievalException {
-        Localization localization = localizationRepository.findOne(localizationId);
+    public WeatherResponseWithMessageDTO getWeather(Long localizationId, LocalDate date) {
+        Localization localization = localizationRepository.findById(localizationId).orElse(null);
         WeatherResponseWithMessageDTO weatherResponseWithMessageDTO = new WeatherResponseWithMessageDTO();
         if (localization != null) {
             Float longitude = localization.getLongitude();
             Float latitude = localization.getLatitude();
             LocalDateTime localDateTime = date.atStartOfDay();
             Timestamp dt = Timestamp.valueOf(localDateTime);
-            Weather weather = weatherAPIClient.getWeather(longitude, latitude, dt);
+            WeatherDTO weather = weatherAPIClient.getWeather(longitude, latitude, dt);
             weather.setLocalization(localization);
             weatherResponseWithMessageDTO.setWeather(weather);
             weatherResponseWithMessageDTO.setGeneralMessage(checkDate(localDateTime.toLocalDate()));
         } else {
-            weatherResponseWithMessageDTO.setGeneralMessage("Wybrano błędną lokalizację, nie można sprawdzić pogody.");
+            throw new NoLocalizationFoundException(localizationId);
         }
         return weatherResponseWithMessageDTO;
     }
@@ -49,6 +50,5 @@ public class WeatherService {
             return null;
         }
     }
-
 }
 
