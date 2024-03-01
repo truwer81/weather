@@ -3,9 +3,11 @@ package com.example.server.weather;
 import com.example.server.exception.NoLocalizationFoundException;
 import com.example.server.localization.Localization;
 import com.example.server.localization.LocalizationRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,6 +17,9 @@ public class WeatherService {
 
     private final WeatherAPIClient weatherAPIClient;
     private final LocalizationRepository localizationRepository;
+
+    @Value("${weather.forecast.ttl}")
+    private Duration forecastTtl;
 
     public WeatherService(WeatherAPIClient weatherAPIClient, LocalizationRepository localizationRepository) {
         this.weatherAPIClient = weatherAPIClient;
