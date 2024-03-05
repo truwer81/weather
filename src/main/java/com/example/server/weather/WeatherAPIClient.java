@@ -33,36 +33,36 @@ public class WeatherAPIClient {
             if (response == null) {
                 throw new WeatherRetrievalException("No weather data could be retrieved.");
             }
-            WeatherDTO weather = new WeatherDTO();
+            WeatherDTO weatherDTO = new WeatherDTO();
             LocalDate WeatherDate = dt.toLocalDateTime().toLocalDate();
             if (response.getData() != null && !response.getData().isEmpty()) {
                 WeatherResponseDTO.MainData mainData = response.getData().get(0); // pierwszy element z listy
-                weather.setTemp(mainData.getTemp());
-                weather.setFeelsLike(mainData.getFeelsLike());
-                weather.setPressure(mainData.getPressure());
-                weather.setHumidity(mainData.getHumidity());
-                weather.setWindSpeed(mainData.getWindSpeed());
-                weather.setWindDeg(mainData.getWindDeg());
-                weather.setCloudsAll(mainData.getCloudsAll());
-                weather.setWeatherDate(WeatherDate);
-                weather.setTimezone(response.getTimezone());
+                weatherDTO.setTemp(mainData.getTemp());
+                weatherDTO.setFeelsLike(mainData.getFeelsLike());
+                weatherDTO.setPressure(mainData.getPressure());
+                weatherDTO.setHumidity(mainData.getHumidity());
+                weatherDTO.setWindSpeed(mainData.getWindSpeed());
+                weatherDTO.setWindDeg(mainData.getWindDeg());
+                weatherDTO.setCloudsAll(mainData.getCloudsAll());
+                weatherDTO.setWeatherDate(WeatherDate);
+                weatherDTO.setTimezone(response.getTimezone());
                 if (!mainData.getWeather().isEmpty()) {
                     WeatherResponseDTO.MainData.WeatherInfo weatherInfo = mainData.getWeather().get(0); // pierwszy element z listy
-                    weather.setDescription(weatherInfo.getDescriptionInfo());
-                    weather.setMainInfo(weatherInfo.getMainInfo());
+                    weatherDTO.setDescription(weatherInfo.getDescriptionInfo());
+                    weatherDTO.setMainInfo(weatherInfo.getMainInfo());
                 }
             } else {
-                weather.setTemp(null);
-                weather.setFeelsLike(null);
-                weather.setPressure(null);
-                weather.setHumidity(null);
-                weather.setWindSpeed(null);
-                weather.setWindDeg(null);
-                weather.setCloudsAll(null);
-                weather.setWeatherDate(WeatherDate);
-                weather.setTimezone(null);
+                weatherDTO.setTemp(null);
+                weatherDTO.setFeelsLike(null);
+                weatherDTO.setPressure(null);
+                weatherDTO.setHumidity(null);
+                weatherDTO.setWindSpeed(null);
+                weatherDTO.setWindDeg(null);
+                weatherDTO.setCloudsAll(null);
+                weatherDTO.setWeatherDate(WeatherDate);
+                weatherDTO.setTimezone(null);
             }
-            return weather;
+            return weatherDTO;
         } catch (Exception e) {
             throw new WeatherRetrievalException("Unexpected error occurred: " + e.getMessage(), e);
         }

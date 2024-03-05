@@ -9,4 +9,9 @@ import java.util.List;
 public interface LocalizationRepository extends JpaRepository<Localization, Long> {
 
     List<Localization> findAllByCountry(String country);
+
+
+    Localization findOneById(Float id);
+
+    //Void save(String city, Float longitude, Float latitude, String  region,String  country);
 }

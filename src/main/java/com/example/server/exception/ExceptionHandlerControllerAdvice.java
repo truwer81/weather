@@ -23,4 +23,13 @@ public class ExceptionHandlerControllerAdvice {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("message", "No localization found", "localizationId", e.getLocalizationId().toString()));
     }
+
+    @ExceptionHandler(WeatherRetrievalException.class)
+    public ResponseEntity<ErrorMessage> handleWeatherRetrievalException(WeatherRetrievalException e) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(e.getMessage()));
+    }
+
+
 }
