@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.time.LocalDate;
+
 @Repository
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
 

@@ -12,7 +12,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -41,7 +40,7 @@ public class WeatherService {
             Float longitude = localization.getLongitude();
             Float latitude = localization.getLatitude();
             Optional<Weather> savedWeathers = weatherRepository.findByLocalizationIdAndWeatherDateOrderByExpiryTimeDesc(localizationId, weatherDate).stream().findFirst();
-            Weather savedWeather =savedWeathers.orElse(null);
+            Weather savedWeather = savedWeathers.orElse(null);
             if (savedWeather != null && SavedWeatherIsCurrent(savedWeather) != null) {
                 savedWeather.setLocalization(localization);
                 weatherResponseWithMessageDTO.setWeather(WeatherToDTO(savedWeather));
