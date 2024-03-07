@@ -1,5 +1,6 @@
 package com.example.server.localization;
 
+import com.example.server.exception.NoLocalizationFoundException;
 import jakarta.persistence.NoResultException;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +9,7 @@ import java.util.List;
 @Service
 public class LocalizationService {
 
-    private LocalizationRepository localizationRepository;
+    private final LocalizationRepository localizationRepository;
 
     public LocalizationService(LocalizationRepository localizationRepository) {
         this.localizationRepository = localizationRepository;
@@ -25,7 +26,7 @@ public class LocalizationService {
             region = null;
         }
 
-        Localization localization = new Localization(null, city, country, region, longitude, latitude);
+        var localization = new Localization(null, city, country, region, longitude, latitude);
 
         return localizationRepository.save(localization);
     }
@@ -38,7 +39,7 @@ public class LocalizationService {
         try {
             return localizationRepository.findById(localizationId).orElse(null);
         } catch (NoResultException e) {
-            return null;
+            throw new NoLocalizationFoundException(localizationId);
         }
     }
 }

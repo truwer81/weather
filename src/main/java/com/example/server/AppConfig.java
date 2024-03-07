@@ -1,4 +1,4 @@
-package com.example.server.weather;
+package com.example.server;
 
 import java.net.http.HttpClient;
 
