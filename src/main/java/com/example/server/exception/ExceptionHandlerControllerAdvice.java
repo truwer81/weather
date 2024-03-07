@@ -30,6 +30,4 @@ public class ExceptionHandlerControllerAdvice {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorMessage(e.getMessage()));
     }
-
-
 }
