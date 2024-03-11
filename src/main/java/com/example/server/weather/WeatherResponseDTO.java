@@ -25,14 +25,14 @@ public class WeatherResponseDTO {
     private String timezone;
 
     @JsonProperty("data")
-    private List<MainData> data; // Klasa pomocnicza dla danych data
+    private List<WeatherForecastDTO> data; // Klasa pomocnicza dla danych data
 
     @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class MainData {
+    public static class WeatherForecastDTO {
         @JsonProperty("dt")
         private Long weatherTimeStamp;
         @JsonProperty("temp")
@@ -50,14 +50,14 @@ public class WeatherResponseDTO {
         @JsonProperty("wind_deg")
         private Float windDeg;
         @JsonProperty("weather")
-        private List<WeatherInfo> weather; // Klasa pomocnicza dla danych weather
+        private List<WeatherInfoDTO> weather; // Klasa pomocnicza dla danych weather
 
         @Getter
         @Setter
         @AllArgsConstructor
         @NoArgsConstructor
         @JsonIgnoreProperties(ignoreUnknown = true)
-        public static class WeatherInfo {
+        public static class WeatherInfoDTO {
             @JsonProperty("main")
             private String mainInfo;
             @JsonProperty("description")

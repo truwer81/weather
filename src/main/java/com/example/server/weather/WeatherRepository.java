@@ -5,10 +5,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Repository
 public interface WeatherRepository extends JpaRepository<Weather, Long> {
 
-    List<Weather> findByLocalizationIdAndWeatherDateOrderByExpiryTimeDesc(Long localizationId, LocalDate weatherDate);
-
+    Optional<Weather> findFirstByLocalizationIdAndWeatherDateOrderByExpiryTimeDesc(Long localizationId, LocalDate weatherDate);
 }
