@@ -3,6 +3,7 @@ package com.example.server.weather;
 import com.example.server.exception.WeatherRetrievalException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,7 @@ public class WeatherAPIClient {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
 
+    @Setter
     @Value("${api.key}")
     private String apiKey;
 
