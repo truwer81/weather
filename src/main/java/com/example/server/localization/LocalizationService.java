@@ -15,7 +15,10 @@ public class LocalizationService {
         this.localizationRepository = localizationRepository;
     }
 
-    public Localization createLocalization(String city, float longitude, float latitude, String region, String country) {
+    public Localization createLocalization(String city, Float longitude, Float latitude, String region, String country) {
+        if (longitude == null || latitude == null) {
+            throw new IllegalArgumentException("Longitude and latitude cannot be null");
+        }
         if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
             throw new IllegalArgumentException("Invalid longitude or latitude");
         }
@@ -37,7 +40,7 @@ public class LocalizationService {
 
     public Localization getLocalization(long localizationId) {
         try {
-            return localizationRepository.findById(localizationId).orElse(null);
+            return localizationRepository.findById(localizationId).orElseThrow(() -> new NoLocalizationFoundException(localizationId));
         } catch (NoResultException e) {
             throw new NoLocalizationFoundException(localizationId);
         }
