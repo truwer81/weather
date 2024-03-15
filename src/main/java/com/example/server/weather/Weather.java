@@ -1,43 +1,35 @@
 package com.example.server.weather;
 
 import com.example.server.localization.Localization;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-
+@Table(name = "weather")
+@Builder
 public class Weather {
 
-    private String description;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "localization_id", referencedColumnName = "id")
+    private Localization localization;
+    @Column(name = "expiry_time", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private LocalDateTime expiryTime;
     private Float temp;
-    private Float feelsLike;
     private Float pressure;
     private Float humidity;
     private Float windSpeed;
     private Float windDeg;
-    private Float cloudsAll;
-    private Long forecastTimestamp;
-    private Localization localization;
-
-    @Override
-    public String toString() {
-        return "Weather" +
-                "{\ndescription='" + description +
-                "\ntemp=" + temp +
-                "\nfeelsLike=" + feelsLike +
-                "\npressure=" + pressure +
-                "\nhumidity=" + humidity +
-                "\nwindSpeed=" + windSpeed +
-                "\nwindDeg=" + windDeg +
-                "\ncloudsAll=" + cloudsAll +
-                "\nforecastTimestamp=" + forecastTimestamp +
-                "\nlocalization=" + localization +
-                '}';
-    }
+    private LocalDate weatherDate;
 }
+
 

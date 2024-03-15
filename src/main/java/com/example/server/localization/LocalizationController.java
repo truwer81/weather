@@ -1,74 +1,44 @@
 package com.example.server.localization;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-// @RequiredArgsConstructor - zamiast konstuktora
+@RestController
+@RequiredArgsConstructor
 public class LocalizationController {
 
-    private ObjectMapper objectMapper;
-    private LocalizationService localizationService;
+    private final LocalizationService localizationService;
+    private final LocalizationMapper localizationMapper;
 
-    public LocalizationController(ObjectMapper objectMapper, LocalizationService localizationService) {
-        this.objectMapper = objectMapper;
-        this.localizationService = localizationService;
+    @PostMapping("/localizations")
+    public ResponseEntity<LocalizationDTO> createLocalization(@RequestBody LocalizationDTO model) {
+        var city = model.getCity();
+        var longitude = model.getLongitude();
+        var latitude = model.getLatitude();
+        var region = model.getRegion();
+        var country = model.getCountry();
+        var localization = localizationService.createLocalization(city, longitude, latitude, region, country);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(localizationMapper.asDTO(localization));
     }
 
-    // POST /localizations
-    public String createLocalization(String json) {
-        try {
-            WeatherDataQueryDTO model = objectMapper.readValue(json, WeatherDataQueryDTO.class);
-            String city = model.getCity();
-            float longitude = model.getLongitude();
-            float latitude = model.getLatitude();
-            String region = model.getRegion();
-            String country = model.getCountry();
-            Localization localization = localizationService.createLocalization(city, longitude, latitude, region, country);
-            WeatherDataQueryDTO weatherDataQueryDTO = asDTO(localization);
-            return objectMapper.writeValueAsString(weatherDataQueryDTO);
-        } catch (JsonProcessingException | IllegalArgumentException e) {
-            return "{\"error\": \"Invalid data\"}"; // http 400
-        } catch (Exception e) {
-            return "{\"error\": \"Internal server error\"}"; // http 500
-        }
+    @GetMapping("/localizations")
+    public ResponseEntity<List<LocalizationDTO>> getLocalizations() {
+        var localizations = localizationService.getAllLocalizations();
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(localizationMapper.asDTO(localizations));
     }
 
-    // GET /localizations
-    public String getLocalizations() throws JsonProcessingException {
-        try {
-            List<Localization> localizations = localizationService.getAllLocalizations();
-            return objectMapper.writeValueAsString(localizations);
-        } catch (JsonProcessingException e) {
-            return "{\"error\": \"Internal server error\"}"; //http 400
-        } catch (Exception e) {
-            return "{\"error\": \"Internal server error\"}"; // http 500
-        }
-    }
-
-    // GET /localizations/{localizationId}
-    public String getLocalization(long localizationId) throws JsonProcessingException {
-        try {
-            Localization localizations = localizationService.getLocalization(localizationId);
-            return objectMapper.writeValueAsString(localizations);
-        } catch (JsonProcessingException e) {
-            return "{\"error\": \"Internal server error\"}"; //http 400
-        } catch (Exception e) {
-            return "{\"error\": \"Internal server error\"}"; // http 500
-        }
+    @GetMapping("/localizations/{localizationId}")
+    public ResponseEntity<LocalizationDTO> getLocalization(@PathVariable long localizationId) {
+        Localization localizations = localizationService.getLocalization(localizationId);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(localizationMapper.asDTO(localizations));
     }
 
 
-    public WeatherDataQueryDTO asDTO(Localization localization) {
-        return new WeatherDataQueryDTO(
-                localization.getId(),
-                localization.getCity(),
-                localization.getCountry(),
-                localization.getRegion(),
-                localization.getLongitude(),
-                localization.getLatitude()
-        );
-    }
 }

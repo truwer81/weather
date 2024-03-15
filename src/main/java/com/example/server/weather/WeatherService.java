@@ -1,37 +1,59 @@
 package com.example.server.weather;
 
+import com.example.server.exception.NoLocalizationFoundException;
 import com.example.server.localization.Localization;
 import com.example.server.localization.LocalizationRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
+@Service
+@RequiredArgsConstructor
 public class WeatherService {
 
-    private WeatherAPIClient weatherAPIClient;
-    private LocalizationRepository localizationRepository;
+    private final WeatherAPIClient weatherAPIClient;
+    private final LocalizationRepository localizationRepository;
+    private final WeatherRepository weatherRepository;
 
-    public WeatherService(WeatherAPIClient weatherAPIClient, LocalizationRepository localizationRepository) {
-        this.weatherAPIClient = weatherAPIClient;
-        this.localizationRepository = localizationRepository;
+    @Value("${weather.forecast.ttl}")
+    private Duration forecastTtl;
+
+    public Weather getWeather(Long localizationId, LocalDate weatherDate) {
+        var localization = localizationRepository.findById(localizationId).orElseThrow(() -> new NoLocalizationFoundException(localizationId));
+        return weatherRepository.findFirstByLocalizationIdAndWeatherDateOrderByExpiryTimeDesc(localizationId, weatherDate)
+                .filter(weather -> weather.getExpiryTime().isAfter(LocalDateTime.now()))
+                .orElseGet(() -> checkCurrentWeather(localization, weatherDate));
     }
 
-    public Weather getWeather(Long localizationId, LocalDate date) throws WeatherAPIClient.WeatherRetrievalException {
-        Float longitude = null;
-        Float latitude = null;
-        Timestamp dt = null;
+    private Weather checkCurrentWeather(Localization localization, LocalDate weatherDate) {
+        var date = weatherDate.atTime(LocalTime.NOON);
+        var dateTimestamp = Timestamp.valueOf(date);
 
-        try {
-            Localization localization = localizationRepository.findOne(localizationId);
-            longitude = localization.getLongitude();
-            latitude = localization.getLatitude();
-            LocalDateTime localDateTime = date.atStartOfDay();
-            dt = Timestamp.valueOf(localDateTime);
-        } catch (Exception e) {
-            throw new WeatherAPIClient.WeatherRetrievalException("404");
-        }
-        return weatherAPIClient.getWeather(longitude, latitude, dt);
+        var longitude = localization.getLongitude();
+        var latitude = localization.getLatitude();
+
+        var weatherResponse = weatherAPIClient.getWeather(longitude, latitude, dateTimestamp);
+
+        var weather = Weather.builder()
+                .id(null)
+                .humidity(weatherResponse.getHumidity())
+                .temp(weatherResponse.getTemp())
+                .pressure(weatherResponse.getPressure())
+                .windSpeed(weatherResponse.getWindSpeed())
+                .windDeg(weatherResponse.getWindDeg())
+                .weatherDate(weatherDate)
+                .localization(localization)
+                .expiryTime(LocalDateTime.now().plus(forecastTtl))
+                .weatherDate(weatherDate)
+                .build();
+
+        return weatherRepository.save(weather);
     }
 }
 

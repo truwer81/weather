@@ -1,16 +1,24 @@
 package com.example.server.localization;
 
+import com.example.server.exception.NoLocalizationFoundException;
+import jakarta.persistence.NoResultException;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
+@Service
 public class LocalizationService {
 
-    private LocalizationRepository localizationRepository;
+    private final LocalizationRepository localizationRepository;
 
     public LocalizationService(LocalizationRepository localizationRepository) {
         this.localizationRepository = localizationRepository;
     }
 
-    public Localization createLocalization(String city, float longitude, float latitude, String region, String country) {
+    public Localization createLocalization(String city, Float longitude, Float latitude, String region, String country) {
+        if (longitude == null || latitude == null) {
+            throw new IllegalArgumentException("Longitude and latitude cannot be null");
+        }
         if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
             throw new IllegalArgumentException("Invalid longitude or latitude");
         }
@@ -21,7 +29,7 @@ public class LocalizationService {
             region = null;
         }
 
-        Localization localization = new Localization(null, city, country, region, longitude, latitude);
+        var localization = new Localization(null, city, country, region, longitude, latitude);
 
         return localizationRepository.save(localization);
     }
@@ -31,6 +39,10 @@ public class LocalizationService {
     }
 
     public Localization getLocalization(long localizationId) {
-        return localizationRepository.findOne(localizationId);
+        try {
+            return localizationRepository.findById(localizationId).orElseThrow(() -> new NoLocalizationFoundException(localizationId));
+        } catch (NoResultException e) {
+            throw new NoLocalizationFoundException(localizationId);
+        }
     }
 }
