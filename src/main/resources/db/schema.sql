@@ -27,3 +27,18 @@ create table if not exists weather (
     constraint fk_weather_localizations foreign key (localization_id)
         references localizations (id) on delete set null
 );
+
+
+CREATE TABLE IF NOT EXISTS users(
+    id bigint generated always as identity primary key,
+    user_name VARCHAR(255) not null unique,
+    user_password VARCHAR(255) not null
+);
+
+CREATE TABLE IF NOT EXISTS sessions(
+    id VARCHAR(255) PRIMARY KEY,
+    user_id bigint,
+    created_at timestamp without time zone default now(),
+    expires_at timestamp without time zone,
+    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+);
