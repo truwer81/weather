@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class LocalizationController {
     private final LocalizationMapper localizationMapper;
 
     @PostMapping("/localizations")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<LocalizationDTO> createLocalization(@RequestBody LocalizationDTO model) {
         var city = model.getCity();
         var longitude = model.getLongitude();

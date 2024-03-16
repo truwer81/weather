@@ -33,7 +33,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_ADMIN");
+        return List.of(() -> "ROLE_COMMON_USER");
     }
 
     @Override
