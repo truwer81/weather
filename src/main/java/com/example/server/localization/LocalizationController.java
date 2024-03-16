@@ -1,5 +1,7 @@
 package com.example.server.localization;
 
+import com.example.server.login.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +29,12 @@ public class LocalizationController {
     }
 
     @GetMapping("/localizations")
-    public ResponseEntity<List<LocalizationDTO>> getLocalizations() {
+    public ResponseEntity<List<LocalizationDTO>> getLocalizations(HttpServletRequest request) {
+        var session = request.getSession();
+        var user = session.getAttribute("user");
+        if (user != null) {
+            System.out.println("Lokalizacje pobiera user: " + ((User) user).getUsername());
+        }
         var localizations = localizationService.getAllLocalizations();
         return ResponseEntity.status(HttpStatus.OK)
                 .body(localizationMapper.asDTO(localizations));

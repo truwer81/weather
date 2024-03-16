@@ -6,22 +6,16 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
 
-    public Long getUserId(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            return user.getId();
-        }
-        return null;
+    public User getUser(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public boolean authenticate(String username, String password) {
-        User user = userRepository.findByUsername(username);
-        if (user != null && user.getPassword().equals(password)) {
-            return true;
-        }
-        return false;
+        return userRepository.findByUsername(username)
+                .filter(u -> u.getPassword().equals(password))
+                .isPresent();
     }
-
 }

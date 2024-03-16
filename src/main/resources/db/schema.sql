@@ -28,17 +28,8 @@ create table if not exists weather (
         references localizations (id) on delete set null
 );
 
-
-
 CREATE TABLE IF NOT EXISTS users(
     id bigint generated always as identity primary key,
     user_name VARCHAR(255) not null unique,
     user_password VARCHAR(255) not null
-);
-
-CREATE TABLE IF NOT EXISTS sessions (
-    id UUID PRIMARY KEY,
-    user_id BIGINT REFERENCES users(id),
-    created_at TIMESTAMP WITHOUT TIME ZONE DEFAULT now(),
-    expires_at TIMESTAMP WITHOUT TIME ZONE
 );
