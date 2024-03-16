@@ -3,7 +3,6 @@ package com.example.server.login;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +26,8 @@ public class LoginController {
 
     @GetMapping("/login")
     public Object getSession(HttpServletResponse httpServletResponse) {
-        // HttpSession session = httpServletRequest.getSession(true);
-        // String sessionId = session.getId();
-        var sessionId = UUID.randomUUID().toString();
-        Cookie sessionCookie = new Cookie("SESSIONID", sessionId);
+        UUID sessionId = UUID.randomUUID();
+        Cookie sessionCookie = new Cookie("SESSIONID", sessionId.toString());
         sessionCookie.setHttpOnly(true); // Zwiększa bezpieczeństwo poprzez zapobieganie dostępu przez JavaScript
         sessionCookie.setPath("/"); // Dostępne dla całej domeny
         sessionCookie.setMaxAge(60 * 60); // MAksymalny czas życia ciasteczka (60*60 = 1 godzina)
@@ -43,8 +40,29 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest request) {
         log.info("Received login request");
-        HttpSession session = request.getSession(true);
-        String sessionId = session.getId();
+
+        // Pobranie UUID z ciasteczka
+        UUID sessionId = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("SESSIONID".equals(cookie.getName())) {
+                    try {
+                        sessionId = UUID.fromString(cookie.getValue());
+                    } catch (IllegalArgumentException e) {
+                        log.error("Invalid UUID format", e);
+                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid session ID.");
+                    }
+                    break;
+                }
+            }
+        }
+
+        if (sessionId == null) {
+            log.warn("No SESSIONID cookie found.");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("No session found.");
+        }
+
         // weryfikacja użytkownika
         String authorization = request.getHeader("Authorization");
         if (authorization != null && authorization.startsWith("Basic")) {
@@ -66,16 +84,17 @@ public class LoginController {
                     log.info("Saving session for user ID: {}", userId);
                     sessionService.saveSession(sessionId, userId, expiry);
                     return ResponseEntity.ok().build();
+
                 }
             } else {
                 log.warn("Authentication failed for username: {}", username);
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed for username: " + username);
             }
 
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed for username: " + username);
         } else {
             log.warn("Authorization header missing or not starting with 'Basic'.");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authorization header missing or not starting with 'Basic'.");
         }
     }
 }
