@@ -16,7 +16,7 @@ public class LoginController {
     private final UserService userService;
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
 
-    @PostMapping("/login")
+    @PostMapping("/example/login")
     public ResponseEntity<?> login(HttpServletRequest request) {
         log.info("Received login request");
         var session = request.getSession();
