@@ -9,11 +9,12 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeatherDataQueryDTO {
+public class LocalizationDTO {
     private Long id;
     private String city;
     private String country;
     private String region;
-    private float longitude;
-    private float latitude;
+    private Float longitude;
+    private Float latitude;
+    private String message;
 }
