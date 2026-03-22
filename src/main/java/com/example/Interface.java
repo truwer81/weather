@@ -25,9 +25,9 @@ public class Interface {
             System.out.println("2. Wyświetl listę zapisanych miast");
             System.out.println("3. Sprawdź pogodę dla wybranego miasta");
             Cl.printlnC(Cl.REDs, 2, "0. Wyłącz program");
-            Cl.printlnC(Cl.BLUEs, 2, "\n Twój wybór: ");
-            int value = scanner.nextInt();
-            scanner.nextLine();
+            Cl.printlnC(Cl.BLUEs, 2, "Twój wybór: ");
+            int value = readMenuChoice(scanner);
+
             switch (value) {
                 case 1:
                     Cl.printlnC(Cl.YELLOWs, 2, "Podaj nazwę miasta:");
@@ -36,10 +36,9 @@ public class Interface {
                     String country = scanner.nextLine();
                     Cl.printlnC(Cl.YELLOWs, 2, "Podaj region (lub wciśnij enter):");
                     String region = scanner.nextLine();
-                    Cl.printlnC(Cl.YELLOWs, 2, "Podaj szerokość geograficzną:");
-                    double latitude = scanner.nextDouble();
-                    Cl.printlnC(Cl.YELLOWs, 2, "Podaj długość geograficzną:");
-                    double longitude = scanner.nextDouble();
+                    double latitude = readDouble(scanner, "Podaj szerokość geograficzną: ");
+                    double longitude = readDouble(scanner, "Podaj długość geograficzną: ");
+
                     String json = "{\"city\":\"" + city + "\",\"country\":\"" + country + "\",\"region\":\"" + region + "\",\"latitude\":" + latitude + ",\"longitude\":" + longitude + "}";
                     String responsePOST = server.callServer("POST", "/localizations", json);
                     Cl.printlnC(Cl.BLUEs, 2, "\nZorbione - odpowiedź: " + responsePOST);
@@ -76,8 +75,8 @@ public class Interface {
 
                             // Pytanie o wybór miasta
                             Cl.printlnC(Cl.BLUEs, 2, "\nWybierz id miasta dla którego chcesz sprawdzić pogodę:");
-                            Long cityId = scanner.nextLong();
-                            scanner.nextLine(); // Oczyszczenie bufora
+                            long cityId = readLong(scanner, "Wybierz id miasta: ");
+
 
                             String dateString = "2024-02-24";
                             // Pytanie o datę - ta funkcja wymaga subskrypcji, w razie wykupienia można ją przywrócić.
@@ -104,4 +103,42 @@ public class Interface {
             }
         }
     }
+
+    private static int readMenuChoice(Scanner scanner) {
+        while (true) {
+            String line = scanner.nextLine().trim();
+            try {
+                int value = Integer.parseInt(line);
+                if (value >= 0 && value <= 3) return value;
+            } catch (NumberFormatException ignored) {
+            }
+            System.out.println("Podaj numer opcji (0-3).");
+            System.out.print("Twój wybór: ");
+        }
+    }
+
+    private static double readDouble(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String line = scanner.nextLine().trim().replace(",", ".");
+            try {
+                return Double.parseDouble(line);
+            } catch (NumberFormatException e) {
+                System.out.println("Podaj liczbę (np. 51.107 lub 51,107).");
+            }
+        }
+    }
+
+    private static long readLong(Scanner scanner, String prompt) {
+        while (true) {
+            System.out.print(prompt);
+            String line = scanner.nextLine().trim();
+            try {
+                return Long.parseLong(line);
+            } catch (NumberFormatException e) {
+                System.out.println("Podaj liczbę całkowitą.");
+            }
+        }
+    }
+
 }
