@@ -3,8 +3,6 @@ package com.example.server.weather;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.LocalDate;
-
 public class WeatherController {
 
     private final ObjectMapper objectMapper;
@@ -15,11 +13,15 @@ public class WeatherController {
         this.weatherService = weatherService;
     }
 
-    // GET /weather-forecast?localizationId={localizationId}&date={date}
+    // TODO: add forecast support with dedicated OpenWeather forecast endpoint
+
+    // GET /weather?localization={localizationId}
     public String getWeather(Long localizationId, String date) throws JsonProcessingException, WeatherAPIClient.WeatherRetrievalException {
         try {
             Weather weather = weatherService.getCurrentWeather(localizationId);
             return objectMapper.writeValueAsString(weather);
+        } catch (WeatherAPIClient.WeatherRetrievalException e) {
+            return "{\"error\": \"" + e.getMessage() + "\"}";
         } catch (JsonProcessingException e) {
             return "{\"error\": \"Internal server error\"}"; //http 400
         } catch (Exception e) {
