@@ -1,72 +1,108 @@
 package com.example.server.weather;
 
+import com.example.config.AppConfig;
 import com.example.server.localization.Localization;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.sql.Timestamp;
+import java.nio.charset.StandardCharsets;
 
 
 public class WeatherAPIClient {
 
+    private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper;
-    private final String apiKey = "13f86a736285b9535206b2294119cb9d";
+    private final String apiKey;
 
     public WeatherAPIClient(HttpClient httpClient, ObjectMapper objectMapper) {
-        this.httpClient = HttpClient.newHttpClient();
-        this.objectMapper = new ObjectMapper();
+        this.httpClient = httpClient;
+        this.objectMapper = objectMapper;
         this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.apiKey = AppConfig.getRequired("OPENWEATHER_API_KEY");
     }
 
-    public Weather getWeather(Float longitude, Float latitude, Timestamp dt) throws WeatherRetrievalException {
-        Weather weather = new Weather();
+    public Weather getCurrentWeather(Localization localization) throws WeatherRetrievalException {
         try {
-            WeatherResponseDTO response = getWeatherClient(longitude, latitude, dt);
-            if (response != null) {
-                weather.setTemp(response.getMainInfo().getTemp());
-                weather.setFeelsLike(response.getMainInfo().getFeelsLike());
-                weather.setPressure(response.getMainInfo().getPressure());
-                weather.setHumidity(response.getMainInfo().getHumidity());
-                weather.setWindSpeed(response.getWindInfo().getWindSpeed());
-                weather.setWindDeg(response.getWindInfo().getWindDeg());
-                weather.setCloudsAll(response.getCloudsInfo().getCloudsAll());
-                weather.setForecastTimestamp(response.getForecastTimestamp());
-                Localization localization = new Localization();
-                localization.setLatitude(response.getCoordinates().getLatitude());
-                localization.setLongitude(response.getCoordinates().getLongitude());
-                localization.setCountry(response.getSystemInfo().getCountryCode());
-                weather.setLocalization(localization);
-                return weather;
-            } else {
-                throw new WeatherRetrievalException("Getting weather error.");
+            URI uri = buildUri(localization.getLatitude(), localization.getLongitude());
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .GET()
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                throw new WeatherRetrievalException(
+                        "OpenWeather returned status " + response.statusCode() + ": " + response.body()
+                );
             }
-        } catch (Exception e) {
-            throw new WeatherRetrievalException("Getting weather error: " + e.getMessage());
+
+            WeatherResponseDTO dto = objectMapper.readValue(response.body(), WeatherResponseDTO.class);
+            return mapToWeather(dto, localization);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new WeatherRetrievalException("Request interrupted while fetching weather data", e);
+        } catch (IOException e) {
+            throw new WeatherRetrievalException("Failed to fetch weather data", e);
         }
     }
 
-    public WeatherResponseDTO getWeatherClient(Float longitude, Float latitude, Timestamp dt) throws WeatherRetrievalException {
-        HttpRequest httpRequest = HttpRequest.newBuilder()
-                .GET()
-                // zapytanie z podaniem daty:   .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&dt=" + dt + "&appid=" + apiKey))
-                .uri(URI.create("https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey))
-                .build();
-        try {
-            HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            return objectMapper.readValue(httpResponse.body(), WeatherResponseDTO.class);
-        } catch (IOException | InterruptedException e) {
-            throw new WeatherRetrievalException("Error while fetching weather data");
-        }
+    private URI buildUri(double latitude, double longitude) {
+        String url = BASE_URL
+                + "?lat=" + latitude
+                + "&lon=" + longitude
+                + "&appid=" + URLEncoder.encode(apiKey, StandardCharsets.UTF_8)
+                + "&units=metric"
+                + "&lang=pl";
+
+        return URI.create(url);
     }
 
-    static public class WeatherRetrievalException extends Exception {
-        public WeatherRetrievalException(String s) {
+    private Weather mapToWeather(WeatherResponseDTO dto, Localization localization) {
+        Weather weather = new Weather();
+
+        if (dto.getWeather() != null && !dto.getWeather().isEmpty()) {
+            weather.setDescription(dto.getWeather().get(0).getDescription());
+        }
+
+        if (dto.getMainInfo() != null) {
+            weather.setTemp(dto.getMainInfo().getTemp());
+            weather.setFeelsLike(dto.getMainInfo().getFeelsLike());
+            weather.setPressure(dto.getMainInfo().getPressure());
+            weather.setHumidity(dto.getMainInfo().getHumidity());
+        }
+
+        if (dto.getWindInfo() != null) {
+            weather.setWindSpeed(dto.getWindInfo().getWindSpeed());
+            weather.setWindDeg(dto.getWindInfo().getWindDeg());
+        }
+
+        if (dto.getCloudsInfo() != null) {
+            weather.setCloudsAll(dto.getCloudsInfo().getCloudsAll());
+        }
+
+        weather.setForecastTimestamp(dto.getForecastTimestamp());
+
+        return weather;
+    }
+
+    public static class WeatherRetrievalException extends Exception {
+        public WeatherRetrievalException(String message) {
+            super(message);
+        }
+
+        public WeatherRetrievalException(String message, Throwable cause) {
+            super(message, cause);
         }
     }
 }

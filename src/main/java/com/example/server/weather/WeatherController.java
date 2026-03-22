@@ -18,8 +18,7 @@ public class WeatherController {
     // GET /weather-forecast?localizationId={localizationId}&date={date}
     public String getWeather(Long localizationId, String date) throws JsonProcessingException, WeatherAPIClient.WeatherRetrievalException {
         try {
-            LocalDate localDate = LocalDate.parse(date);
-            Weather weather = weatherService.getWeather(localizationId, localDate);
+            Weather weather = weatherService.getCurrentWeather(localizationId);
             return objectMapper.writeValueAsString(weather);
         } catch (JsonProcessingException e) {
             return "{\"error\": \"Internal server error\"}"; //http 400
