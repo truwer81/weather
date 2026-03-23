@@ -16,45 +16,30 @@ public class LocalizationRepository {
     }
 
     public Localization save(Localization localization) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
+        Transaction transaction = null;
 
-        session.persist(localization);
-
-        transaction.commit();
-        session.close();
-
-        return localization;
-    }
-
-    public List<Localization> findAll() {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            String hql = "FROM Localization";
-            Query<Localization> query = session.createQuery(hql, Localization.class);
-
-            List<Localization> localizations = query.getResultList();
+        try (Session session = sessionFactory.openSession()) {
+            transaction = session.beginTransaction();
+            session.persist(localization);
             transaction.commit();
-            return localizations;
-        } finally {
-            session.close();
+            return localization;
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            throw e;
         }
     }
 
-    public Localization findOne(long localizationId) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = session.beginTransaction();
-        try {
-            String hql = "FROM Localization WHERE id=" + localizationId;
-            Query<Localization> query = session.createQuery(hql, Localization.class);
+    public List<Localization> findAll() {
+        try (Session session = sessionFactory.openSession()) {
+            return session.createQuery("FROM Localization", Localization.class).getResultList();
+        }
+    }
 
-            Localization localization = query.getSingleResult();
-            transaction.commit();
-            return localization;
-        } finally {
-
-            session.close();
+    public Localization findOne(Long localizationId) {
+        try (Session session = sessionFactory.openSession()) {
+            return session.find(Localization.class, localizationId);
         }
     }
 }
