@@ -14,6 +14,6 @@ public class WeatherDataQueryDTO {
     private String city;
     private String country;
     private String region;
-    private float longitude;
-    private float latitude;
+    private double longitude;
+    private double latitude;
 }

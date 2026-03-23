@@ -78,18 +78,16 @@ public class Interface {
                             long cityId = readLong(scanner, "Wybierz id miasta: ");
 
 
-                            String dateString = "2024-02-24";
+//                            String dateString = "2024-02-24";
                             // Pytanie o datę - ta funkcja wymaga subskrypcji, w razie wykupienia można ją przywrócić.
                             //Cl.printlnC(Cl.BLUEs, 2, "Podaj datę (RRRR-MM-DD):");
                             //String dateString = scanner.nextLine();
 
-                            String path = "/weather?localization=" + cityId + "&date=" + dateString;
-                            String weatherResponse = server.callServer("GET", path, null);
-
-                            Optional<WeatherDataQueryDTO> mycity = localizations.stream()
-                                    .filter(localization -> cityId == localization.getId().longValue())
+                            String weatherResponse = server.callServer("GET", "/weather?localization=" + cityId, null);
+                            Optional<WeatherDataQueryDTO> myCity = localizations.stream()
+                                    .filter(localization -> cityId == localization.getId())
                                     .findFirst();
-                            mycity.ifPresent(myCity -> Cl.printlnC(Cl.GREENs, 2, "\nPogoda w lokalizacji: " + myCity.getCity()));
+                            myCity.ifPresent(c -> Cl.printlnC(Cl.GREENs, 2, "\nPogoda w lokalizacji: " + c.getCity()));
                             Cl.printlnC(Cl.GREENs, 3, weatherResponse);
                         }
                     } catch (JsonProcessingException e) {

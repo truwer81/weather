@@ -22,8 +22,8 @@ public class LocalizationController {
         try {
             WeatherDataQueryDTO model = objectMapper.readValue(json, WeatherDataQueryDTO.class);
             String city = model.getCity();
-            float longitude = model.getLongitude();
-            float latitude = model.getLatitude();
+            var longitude = model.getLongitude();
+            var latitude = model.getLatitude();
             String region = model.getRegion();
             String country = model.getCountry();
             Localization localization = localizationService.createLocalization(city, longitude, latitude, region, country);

@@ -1,10 +1,6 @@
 package com.example.server.localization;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,6 +20,6 @@ public class Localization {
     private String city;
     private String country;
     private String region;
-    private float longitude;
-    private float latitude;
+    private Double longitude;
+    private Double latitude;
 }

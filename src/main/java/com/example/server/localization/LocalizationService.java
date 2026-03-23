@@ -10,7 +10,7 @@ public class LocalizationService {
         this.localizationRepository = localizationRepository;
     }
 
-    public Localization createLocalization(String city, float longitude, float latitude, String region, String country) {
+    public Localization createLocalization(String city, double longitude, double latitude, String region, String country) {
         if (longitude < -180 || longitude > 180 || latitude < -90 || latitude > 90) {
             throw new IllegalArgumentException("Invalid longitude or latitude");
         }
