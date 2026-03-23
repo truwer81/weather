@@ -15,17 +15,15 @@ public class WeatherController {
 
     // TODO: add forecast support with dedicated OpenWeather forecast endpoint
 
-    // GET /weather?localization={localizationId}
-    public String getWeather(Long localizationId, String date) throws JsonProcessingException, WeatherAPIClient.WeatherRetrievalException {
+// GET /weather?localization={localizationId}
+    public String getCurrentWeather(Long localizationId) throws JsonProcessingException {
         try {
-            Weather weather = weatherService.getCurrentWeather(localizationId);
+            var weather = weatherService.getCurrentWeather(localizationId);
             return objectMapper.writeValueAsString(weather);
         } catch (WeatherAPIClient.WeatherRetrievalException e) {
             return "{\"error\": \"" + e.getMessage() + "\"}";
-        } catch (JsonProcessingException e) {
-            return "{\"error\": \"Internal server error\"}"; //http 400
         } catch (Exception e) {
-            return "{\"error\": \"Internal server error\"}"; // http 500
+            return "{\"error\": \"Internal server error\"}";
         }
     }
 }

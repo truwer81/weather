@@ -9,7 +9,6 @@ import com.example.server.weather.WeatherService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.SessionFactory;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -24,13 +23,13 @@ public class Server {
     private final WeatherController weatherController;
 
     public Server() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        var objectMapper = new ObjectMapper();
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        SessionFactory sessionFactory = HibernateUtils.getSessionFactory();
-        LocalizationRepository localizationRepository = new LocalizationRepository(sessionFactory);
-        LocalizationService localizationService = new LocalizationService(localizationRepository);
-        LocalizationController localizationController = new LocalizationController(objectMapper, localizationService);
-        HttpClient httpClient = HttpClient.newHttpClient();
+        var sessionFactory = HibernateUtils.getSessionFactory();
+        var localizationRepository = new LocalizationRepository(sessionFactory);
+        var localizationService = new LocalizationService(localizationRepository);
+        var localizationController = new LocalizationController(objectMapper, localizationService);
+        var httpClient = HttpClient.newHttpClient();
 
         WeatherAPIClient weatherAPIClient = new WeatherAPIClient(httpClient, objectMapper);
         WeatherService weatherService = new WeatherService(weatherAPIClient, localizationRepository);
@@ -47,18 +46,15 @@ public class Server {
             } else if (Objects.equals(method, "GET") && path.startsWith("/localizations")) {
                 return localizationController.getLocalizations();
             } else if (Objects.equals(method, "GET") && path.startsWith("/weather")) {
-                String query = uri.getQuery();
+                var query = uri.getQuery();
                 Map<String, String> queryParams = splitQuery(query);
-                Long localizationId = toInt(queryParams.get("localization"));
-                String date = queryParams.get("date");
-                return weatherController.getWeather(localizationId, date);
+                var localizationId = toInt(queryParams.get("localization"));
+                return weatherController.getCurrentWeather(localizationId);
             }
         } catch (URISyntaxException e) {
             throw new HttpRequestException("Invalid URI syntax: " + path, e);
         } catch (JsonProcessingException e) {
             throw new HttpRequestException("JSON processing error: " + json, e);
-        } catch (WeatherAPIClient.WeatherRetrievalException e) {
-            throw new RuntimeException(e);
         }
         return "404";
     }
